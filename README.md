@@ -21,19 +21,14 @@ in 1958. This program can be called in one of two ways.
 	example: python Hot100Plot.py Madonna 50 1983 2004
 
 Notes of caution:
-	If the string of text used for the artist name is contained within another artist name,
-	those songs will also be recorded. For example if the artist_name is "Micheal", it will
-	produce a plot show songs from Michael Jackson, Michael McDonald, George Michael, etc.
 
-	A song will be collect if artist_name is either a lead artist or featured artist.
+If the string of text used for the artist name is contained within another artist name, those songs will also be recorded. For example if the artist_name is "Micheal", it will produce a plot show songs from Michael Jackson, Michael McDonald, George Michael, etc.
 
-	If a singer charts a ton of songs at the same time, as currently coded the names will
-	all lie on top of each other (try Drake...lol...). This seems like a pain to fix so
-	I will probably just leave it as is. 
+A song will be collect if artist_name is either a lead artist or featured artist.
 
-	There may be some wonkiness with respect to band names with special characters in them,
-	like ' " &. These are probably fixable, but all the problems won't be enounctered for
-	some time I am sure.
+If a singer charts a ton of songs at the same time, as currently coded the names will all lie on top of each other (try Drake...lol...). This seems like a pain to fix so I will probably just leave it as is. 
+
+There may be some wonkiness with respect to band names with special characters in them, like ' " &. These are probably fixable, but all the problems won't be enounctered for some time I am sure.
   
   
   
