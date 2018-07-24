@@ -1,6 +1,6 @@
 # hot100plots
 
-Hot100Plot.py
+** Hot100Plot.py **
 
 This program produces a plot of the chart locations of every song by 
 a specified artist on the Billboard Hot 100 chart since it's inception
@@ -37,7 +37,7 @@ Notes of caution:
   
   
   
-  GetNewChart.py
+** GetNewChart.py **
   
 This program uses wget to query the Billboard Hot 100 website for a specific date. It then parses the resulting .html file into a more easily usable format.
 
@@ -51,6 +51,6 @@ Billboard published a new Hot 100 chart every Tuesday, with data from the last F
 
 
 
-hot100charts
+** hot100charts **
 
-This is the file containing all of the parsed charts. The files are pretty self-explanatory.
+This is a folder containing all of the parsed charts. The files are pretty self-explanatory.
