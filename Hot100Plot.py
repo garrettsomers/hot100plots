@@ -51,11 +51,11 @@ def artist_plot(artist_name,top_x,*args):
 	## Create a list of colors to iterate through.
 	AllColors = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#6a3d9a','#fdbf6f','#ff7f00','#cab2d6','#e31a1c','gold','#b15928','k']
 	## Read in all the dates of Hot 100 lists.
-	dates = sorted(os.listdir('hot100/'))
+	dates = sorted(os.listdir('hot100charts/'))
 	allsongs = []
 	## Cycle through every list searching for artist_name.
 	for day in dates:
-		lines = open('hot100/'+day).readlines()
+		lines = open('hot100charts/'+day).readlines()
 		for i in xrange(len(lines)):
 			line = lines[i]
 			rank   = line.rsplit(',')[0]
@@ -63,7 +63,7 @@ def artist_plot(artist_name,top_x,*args):
 			artist = line.rsplit(',')[2].replace('"','')
 			if artist_name in artist:
 				## Found the artists name! Make sure its above our cutoff.
-				if int(rank) > top_x: continue
+				if int(rank) > int(top_x): continue
 				## Create a vector for dates and rankings for this song.
 				try: vars()[song]
 				except KeyError:
