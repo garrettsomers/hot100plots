@@ -9,16 +9,19 @@ in 1958. This program can be called in one of two ways.
 1) Pass two arguments.
 	artist_name (str) = The name of the band/artist. If the name contains a space, put it in quotes.
 	top_x       (int) = Only consider chartings within the top X. I.E. top 100, top 50, top 10, etc.
-
+	
 	example: python Hot100Plot.py "Taylor Swift" 100
-
+	
+	![Tay-tay](https://github.com/garrettsomers/hot100plots/blob/master/TaylorSwift_100.png)
 2) Pass four arguments.
 	artist_name (str) = Same as above.
 	top_x       (int) = Same as above.
 	ForceYr1    (int) = Force the chart to begin on Jan 1 of a specified year.
 	ForceYr2    (int) = Force the chart to end on Dec 31 of a specified year.
-
+	
 	example: python Hot100Plot.py Madonna 50 1983 2004
+	
+	![My lady](https://github.com/garrettsomers/hot100plots/blob/master/Madonna_50_1983_2005.png)
 	
 About the plots:
 
