@@ -19,6 +19,10 @@ in 1958. This program can be called in one of two ways.
 	ForceYr2    (int) = Force the chart to end on Dec 31 of a specified year.
 
 	example: python Hot100Plot.py Madonna 50 1983 2004
+	
+About the plots:
+
+Solid lines connect consecutive weeks when an individual song charted in the top 100. The faded, dotted lines represent interludes between two different times when the song charted on the Hot 100 -- i.e. if a song charts on non-consecutive weeks, this line will connect the two charting weeks. The points indicate when a song charted in a week, but not the previous or next week. The length of the plot automatically adjusts depending on how many years are being displayed. This is particularly so that the song names don't cluster on top of one another too frequently.
 
 Notes of caution:
 
