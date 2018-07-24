@@ -49,3 +49,8 @@ If wget and parsing are successful, it will ask if you want to delete the html o
 
 Billboard published a new Hot 100 chart every Tuesday, with data from the last Friday-Thursday period. A single date is associated with each chart, corresponding to the Saturday which immediately follows the Tuesday of publishing. Ideally you should query the date of this Saturday as this is the official date for the chart, and plots produced with this chart will thus have the correct publish date. However, querying other days will also download the chart for whichever week that date happens to fall into.
 
+
+
+hot100charts
+
+This is the file containing all of the parsed charts. The files are pretty self-explanatory.
