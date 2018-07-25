@@ -190,7 +190,7 @@ def artist_plot(artist_name,top_x,*args):
 	ax11.set_ylabel('Hot 100 Chart Ranking')
 
 	#pl.subplots_adjust(left=0.03,bottom=0.11,right=0.98,top=0.92)
-	pl.title(artist_name+' Hot 100 Rankings')
+	pl.title(artist_name+' Hot 100 Rankings ('+StartYear+'-'+EndYear+')')
 	pl.tight_layout()
 
 	## Name the plot appropriately
