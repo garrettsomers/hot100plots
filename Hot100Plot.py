@@ -55,6 +55,10 @@ def artist_plot(artist_name,top_x,*args):
 	allsongs = []
 	## Cycle through every list searching for artist_name.
 	for day in dates:
+		## If we are forcing dates and this chart does fall within those years, skip.
+		if ForceYears:
+			yr = int(day.rsplit('-')[0])
+			if yr < int(ForceYr1) or yr > int(ForceYr2): continue
 		lines = open('hot100charts/'+day).readlines()
 		for i in xrange(len(lines)):
 			line = lines[i]
