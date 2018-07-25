@@ -52,7 +52,7 @@ def artist_plot(artist_name,top_x,*args):
 	AllColors = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#6a3d9a','#fdbf6f','#ff7f00','#cab2d6','#e31a1c','gold','#b15928','k']
 	## Read in all the dates of Hot 100 lists.
 	dates = sorted(os.listdir('hot100charts/'))
-	allsongs = []
+	allsongs, allyears = [], []
 	## Cycle through every list searching for artist_name.
 	for day in dates:
 		## If we are forcing dates and this chart does fall within those years, skip.
@@ -75,20 +75,63 @@ def artist_plot(artist_name,top_x,*args):
 				## Save the date and ranking.
 				vars()[song].append([day,int(rank)])
 				if song not in allsongs: allsongs.append(song)
+				yr = int(day.rsplit('-')[0])
+				if yr not in allyears: allyears.append(str(yr))
+				
+	## Determine how many rows we need.
+	tens = []
+	for yr in allyears:
+		if yr[2] == '5': tens.append(1)
+		if yr[2] == '6': tens.append(2)
+		if yr[2] == '7': tens.append(3)
+		if yr[2] == '8': tens.append(4)
+		if yr[2] == '9': tens.append(5)
+		if yr[2] == '0': tens.append(6)
+		if yr[2] == '1': tens.append(7)
+	
+	yrmin, yrmax = min(tens), max(tens)
+	yrs = range(yrmin,yrmax+1)
 
 	## Save a vector of every date from start to end. The index of each date
 	## in the vector will correspond to where the lines are plotted.
-	d1 = date(1958, 1, 1)  # start date
-	d2 = date(2019, 1, 1)  # end date
+	d1 = date(1950, 1, 1)  # start date
+	d2 = date(2020, 1, 1)  # end date
 	delta = d2 - d1         # timedelta
 	outdates = []
 	for i in range(delta.days + 1):
 		## Save the dates.
 		outdates.append(str(d1 + timedelta(i)))
+	
+	## Calculate the final index for each plot and plot ranges.
+	Dec31s = []
+	for yr in ('1959','1969','1979','1989','1999','2009','2019'):
+		Dec31s.append(outdates.index(yr+'-12-31'))
+		
+	## Create the figure and save the ranges for each plot.
+	AllAxes, AllXlims = [], []
+	fig1 = pl.figure(figsize=(15,len(yrs)*3))
+	for i, axnum in enumerate(range(yrmin,yrmax+1)):
+		vars()['ax1'+str(axnum)] = fig1.add_subplot(len(yrs),1,i+1)
+		AllAxes.append(vars()['ax1'+str(axnum)])
+		#if axnum == 1: AllXlims.append(outdates.index('1950-01-01'),outdates.index('1959-12-31'))
+		#if axnum == 2: AllXlims.append(outdates.index('1960-01-01'),outdates.index('1969-12-31'))
+		#if axnum == 3: AllXlims.append(outdates.index('1970-01-01'),outdates.index('1979-12-31'))
+		#if axnum == 4: AllXlims.append(outdates.index('1980-01-01'),outdates.index('1989-12-31'))
+		#if axnum == 5: AllXlims.append(outdates.index('1990-01-01'),outdates.index('1999-12-31'))
+		#if axnum == 6: AllXlims.append(outdates.index('2000-01-01'),outdates.index('2009-12-31'))
+		#if axnum == 7: AllXlims.append(outdates.index('2010-01-01'),outdates.index('2019-12-31'))
+		if axnum == 1: AllXlims.append(('1950','1960'))
+		if axnum == 2: AllXlims.append(('1960','1970'))
+		if axnum == 3: AllXlims.append(('1970','1980'))
+		if axnum == 4: AllXlims.append(('1980','1990'))
+		if axnum == 5: AllXlims.append(('1990','2000'))
+		if axnum == 6: AllXlims.append(('2000','2010'))
+		if axnum == 7: AllXlims.append(('2010','2020'))
 
+		
 	## Make the figure.
-	fig1 = pl.figure(figsize=(15,5))
-	ax11 = fig1.add_subplot(111)
+#	fig1 = pl.figure(figsize=(15,5))
+#	ax11 = fig1.add_subplot(111)
 
 	## Set the y-axis locations for plotting song names.
 	spacing = logspace(log10(0.15),log10(0.9),13)
@@ -103,13 +146,17 @@ def artist_plot(artist_name,top_x,*args):
 		songnums = [outdates.index(sd) for sd in songdates]
 		## Get the next color.
 		col = AllColors[i%len(AllColors)]
+		## Determine which axis to start on.
+		for z, Dec31 in enumerate(Dec31s):
+			if songnums[0] < Dec31: break
+		ax = vars()['ax1'+str(z+1)]
 
 		## Now check if the song only charted 1 week. If so, plot a point.
 		if len(songnums) <= 1:
-			ax11.scatter(songnums,songranks,color=col)
+			ax.scatter(songnums,songranks,color=col)
 		else:
 			## If the song charted 1 week then fell off until later, plot a plot there.
-			if songnums[1]-songnums[0] > 10: ax11.scatter(songnums[0],songranks[0],color=col)
+			if songnums[1]-songnums[0] > 10: ax.scatter(songnums[0],songranks[0],color=col)
 			## Now for each consecutive chartings, if they are consecutive weeks plot
 			## a solid line. If they are non-consecutive weeks, plot a faded + dotted line.
 			for j in xrange(len(songnums)-1):
@@ -118,18 +165,25 @@ def artist_plot(artist_name,top_x,*args):
 				## If more than 7 days, ghost the line.
 				if diff > 10: alfa, lss = 0.3, ':'
 				else: alfa, lss = 1, '-'
+
+				## Check if the line moves from one decade to the next. If so,
+				## change the plot and go to the next point.
+				if songnums[j] > Dec31s[z]:
+					z += 1
+					ax = vars()['ax1'+str(z+1)]
+					#continue
 				## Plot.
-				ax11.plot(songnums[j:j+2],songranks[j:j+2],color=col,alpha=alfa,ls=lss)
+				ax.plot(songnums[j:j+2],songranks[j:j+2],color=col,alpha=alfa,ls=lss)
 				## If this is an isolated charting that isn't right at the start or end,
 				## make a point.
 				try: songnums[j-1] - songnums[j+1]
 				except IndexError: pass
 				if j > 0 and j < len(songnums)-1:
 					if songnums[j] - songnums[j-1] > 10 and songnums[j+1] - songnums[j] > 10:
-						ax11.scatter(songnums[j],songranks[j],color=col)
+						ax.scatter(songnums[j],songranks[j],color=col)
 
 		## Plot the song name and save the earliest and latest chart dates for setting the x-axis later.
-		ax11.text(songnums[0],spacing[i%13],song.replace("&#039;","'").replace("amp;",""),fontsize=8,color=col)
+		ax.text(songnums[0],spacing[i%13],song.replace("&#039;","'").replace("amp;",""),fontsize=4,color=col)
 		FirstDay.append(min(songnums))
 		LastDay.append(max(songnums))
 
@@ -151,46 +205,49 @@ def artist_plot(artist_name,top_x,*args):
 		StartYear = outdates[min(FirstDay)][:4]
 		EndYear   = str(int(outdates[max(LastDay)][:4])+1)
 
-	fig1.set_size_inches(3*(int(EndYear)-int(StartYear)), 5)
-	Xstart = StartYear+'-01-01'
-	Xend   = EndYear+'-01-01'
+	for ax, xlimits in zip(AllAxes,AllXlims):
+		## Plot lines to indicate #1, 3, 10, and 30
+		ax.plot([0,len(outdates)*1.05],[1,1],'k--',lw=0.5)
+		ax.plot([0,len(outdates)*1.05],[3,3],'k--',lw=0.5,alpha=0.3)
+		ax.plot([0,len(outdates)*1.05],[10,10],'k--',lw=0.5)
+		ax.plot([0,len(outdates)*1.05],[30,30],'k--',lw=0.5,alpha=0.3)
+		
+		## Get the xlimits and ticks.
+		Xstart = xlimits[0]+'-01-01'
+		Xend   = xlimits[1]+'-01-01'
 	
-	## Determine the appropriate tickmarks.
-	BigTickDates = [str(int(yr))+'-01-01' for yr in arange(int(StartYear),int(EndYear)+0.5)]
-	SmallTkNums = []
-	for BTD in BigTickDates:
-		## Don't plot small ticks past the last Jan 1.
-		if BTD == BigTickDates[-1]: break
-		for n in ('02','03','04','05','06','07','08','09','10','11','12'):
-			td = BTD.replace('-01-','-'+n+'-')
-			try: SmallTkNums.append(outdates.index(td))
-			except ValueError: break
+		## Determine the appropriate tickmarks.
+		BigTickDates = [str(int(yr))+'-01-01' for yr in arange(int(xlimits[0]),int(xlimits[1])+0.5)]
+		SmallTkNums = []
+		for BTD in BigTickDates:
+			## Don't plot small ticks past the last Jan 1.
+			if BTD == BigTickDates[-1]: break
+			for n in ('02','03','04','05','06','07','08','09','10','11','12'):
+				td = BTD.replace('-01-','-'+n+'-')
+				try: SmallTkNums.append(outdates.index(td))
+				except ValueError: break
 
-	xlocs = [outdates.index(td) for td in BigTickDates]
-	xlabs = ['Jan 1 '+td.replace('-01-01','') for td in BigTickDates]
+		xlocs = [outdates.index(td) for td in BigTickDates]
+		xlabs = [td.replace('-01-01','') for td in BigTickDates]
 
-	## Plot lines to indicate #1, 3, 10, and 30
-	ax11.plot([0,len(outdates)*1.05],[1,1],'k--',lw=0.5)
-	ax11.plot([0,len(outdates)*1.05],[3,3],'k--',lw=0.5,alpha=0.3)
-	ax11.plot([0,len(outdates)*1.05],[10,10],'k--',lw=0.5)
-	ax11.plot([0,len(outdates)*1.05],[30,30],'k--',lw=0.5,alpha=0.3)
+		## Format x axis		
+		ax.set_xlim(outdates.index(Xstart),outdates.index(Xend))
+		ax.xaxis.set_ticks(xlocs)
+		ax.xaxis.set_ticklabels(xlabs)
+		ax.xaxis.set_ticks(SmallTkNums,minor=True)
+		ax.set_xlabel('Date (Tick labels = January 1st)')
 
-	## Format x axis		
-	ax11.set_xlim(outdates.index(Xstart),outdates.index(Xend))
-	ax11.xaxis.set_ticks(xlocs)
-	ax11.xaxis.set_ticklabels(xlabs)
-	ax11.xaxis.set_ticks(SmallTkNums,minor=True)
-	ax11.set_xlabel('Date')
-
-	## Format y axis.
-	ax11.set_yscale('log')
-	ax11.set_ylim(110,0.1)
-	ax11.yaxis.set_ticks([100,50,30,20,10,5,3,2,1])
-	ax11.yaxis.set_ticklabels(['100','50','30','20','10','5','3','2','1'])
-	ax11.set_ylabel('Hot 100 Chart Ranking')
+		## Format y axis.
+		ax.set_yscale('log')
+		ax.set_ylim(110,0.1)
+		ax.yaxis.set_ticks([100,50,30,20,10,5,3,2,1])
+		ax.yaxis.set_ticklabels(['100','50','30','20','10','5','3','2','1'])
+		ax.set_ylabel('Hot 100 Chart Ranking')
+		
+		if ax == AllAxes[0]: ax.set_title(artist_name+' Hot 100 Rankings ('+StartYear+'-'+EndYear+')')
 
 	#pl.subplots_adjust(left=0.03,bottom=0.11,right=0.98,top=0.92)
-	pl.title(artist_name+' Hot 100 Rankings ('+StartYear+'-'+EndYear+')')
+	#pl.title(artist_name+' Hot 100 Rankings ('+StartYear+'-'+EndYear+')')
 	pl.tight_layout()
 
 	## Name the plot appropriately
